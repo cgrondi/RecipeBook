@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http'
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -34,9 +35,12 @@ import { RecipeService } from './recipes/recipe.service';
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule,
     AppRoutingModule
   ],
-  //ShoppingListService provided by using @Injectable({providedIn: root}) in shopping-list.service.ts
+  //ShoppingListService provided by using @Injectable({providedIn: 'root'}) in shopping-list.service.ts
+  //DataStorageService provided by using @Injectable({providedIn: 'root'}) in data-storage.service.ts
+  //RecipesResolverService provided by using @Injectable({providedIn: 'root'}) in recipes-resolver.service.ts
   providers: [RecipeService],
   bootstrap: [AppComponent]
 })
