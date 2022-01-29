@@ -1,12 +1,17 @@
-import { HttpClient } from "@angular/common/http"; //IMPORTANT: don't forget to import HttpClient in app.module.ts and add it to the imports section
+import { HttpClient, HttpParams } from "@angular/common/http"; //IMPORTANT: don't forget to import HttpClient in app.module.ts and add it to the imports section
 import { Injectable } from "@angular/core";
 import { Recipe } from "../recipes/recipe.model";
 import { RecipeService } from "../recipes/recipe.service";
-import { map, tap } from "rxjs/operators"
+import { exhaustMap, map, take, tap } from "rxjs/operators"
+import { AuthService } from "../auth/auth.service";
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
-    constructor(private http: HttpClient, private recipeService: RecipeService) { }
+    constructor(
+        private http: HttpClient, 
+        private recipeService: RecipeService, 
+        private authService: AuthService
+    ) { }
 
     storeRecipes() {
         const recipes = this.recipeService.getRecipes();
@@ -17,8 +22,10 @@ export class DataStorageService {
     }
 
     fetchRecipes() {
-        return this.http.get<Recipe[]>('https://ng-course-recipe-book-f9dbe-default-rtdb.firebaseio.com/recipes.json')
-            .pipe(map(recipes => {
+        return this.http.get<Recipe[]>(
+            'https://ng-course-recipe-book-f9dbe-default-rtdb.firebaseio.com/recipes.json'
+        ).pipe(
+            map(recipes => {
                 return recipes.map(recipe => {
                     //take each recipe of recipes and return that recipe using the spread operator but specifically set 
                     //the ingredients property using a ternerary operator. If recipe.ingredients exists, set recipe.ingredients
@@ -27,10 +34,9 @@ export class DataStorageService {
                     return { ...recipe, ingredients: recipe.ingredients ? recipe.ingredients : [] };
                 });
             }),
-                tap(recipes => {
-                    this.recipeService.setRecipes(recipes);
-                })
-            )
-
+            tap(recipes => {
+                this.recipeService.setRecipes(recipes);
+            })
+        );
     }
 }
